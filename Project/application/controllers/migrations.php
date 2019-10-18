@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+class Migrations extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -20,11 +20,12 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->database();
-		$query = $this->db->get_where('blog', array('blog_id' => 1));
-		$data = $query->result_array();
-		$this->load->view('welcome_message', [
-			"datas"=> $data
-		]);
+		$this->load->library('migration');
+        if ($this->migration->current() === FALSE) {
+            show_error($this->migration->error_string());
+        }
+        else {
+            echo "Migration Success";
+        }
 	}
 }
