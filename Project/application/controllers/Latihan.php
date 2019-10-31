@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Latihan extends CI_Controller {
+class Latihan extends CI_Controller
+{
 	/**
 	 * Index Page for this controller.
 	 *
@@ -20,27 +21,36 @@ class Latihan extends CI_Controller {
 	public function index()
 	{
 		//echo "Ha! It's ME!";
-		// $this->load->database();
+		$this->load->database();
 		// $query = $this->db->get_where('blog', array('blog_id' => 1));
 		// $data = $query->result_array();
 		// $this->load->view('latihan', [
 		// 	"datas"=> $data
 		// ]);
-		//$this->getResponseOrg("ifunpar","latihan");
+		$this->add_to_db('ifunpar');
 	}
 
-	public function getResponseOrg($org){
-		$url = "https://api.github.com/orgs/".$org."/repos";
+	public function getResponseOrg($org)
+	{
+		$url = "https://api.github.com/orgs/" . $org;
 		return $this->getResponse($url);
 	}
 
-	public function getOrgProjects($org){
-		$url = "https://api.github.com/orgs/".$org."/projects";
+	public function getOrgRepos($org)
+	{
+		$url = "https://api.github.com/orgs/" . $org . "/repos";
 		return $this->getResponse($url);
 	}
 
-	public function getOrgMembers($org){
-		$url = "https://api.github.com/orgs/".$org."/members";
+	public function getOrgProjects($org)
+	{
+		$url = "https://api.github.com/orgs/" . $org . "/projects";
+		return $this->getResponse($url);
+	}
+
+	public function getOrgMembers($org)
+	{
+		$url = "https://api.github.com/orgs/" . $org . "/members";
 		return $this->getResponse($url);
 	}
 
@@ -48,25 +58,26 @@ class Latihan extends CI_Controller {
 	//Di beranda kan ada tulisan repo, projek, sama organisasi
 	//Ternyata, url mereka bertiga terpisah (nggak bisa ngambil dari satu url)
 	//jadinya struktur function ini gw ubah :)
-	public function getResponse($url){
+	public function getResponse($url)
+	{
 		// header('Content-type: application/json');
 		//header('Content-type: text/plain');
 
 		$ch = curl_init();
-		
-		curl_setopt_array($ch,[
+
+		curl_setopt_array($ch, [
 			CURLOPT_URL => $url,
 			CURLOPT_HTTPHEADER => [
 				"User-Agent: IrvanHardyanto98",
 				"Accept: application/vnd.github.inertia-preview+json"
 			],
-			CURLOPT_RETURNTRANSFER=>true,
+			CURLOPT_RETURNTRANSFER => true,
 		]);
 
 		$response_body = curl_exec($ch);
 		curl_close($ch);
 
-		$jsonObj = json_decode($response_body,true);
+		$jsonObj = json_decode($response_body, true);
 		//var_dump($jsonObj);
 		// $this->load->view($view, [
 		// 	"datas"=> $jsonObj
@@ -77,23 +88,116 @@ class Latihan extends CI_Controller {
 	//ini buat nampilin view, pake data tertentu
 	//show a specific view with some kind of data, represented as php traditional array
 	//use empty array if no data need to be shown
-	public function showView($viewName,$data){
-		$this->load->view($viewName,$data);
+	public function showView($viewName, $data)
+	{
+		$this->load->view($viewName, $data);
 	}
 
-	public function test(){
+	public function test()
+	{
 		$this->load->helper('url');
-		$this->load->view("beranda",[]);
+		$this->load->view("beranda", []);
 	}
 
-	public function form_submit(){
+	public function form_submit()
+	{
 		$org_name = $this->input->post('org_name');
 		//isi array datas:
 		//indeks ke-0 : data repo
 		//indeks ke-1 : data proyek
 		//indeks ke-2 : data anggota
 		$datas = array();
-		array_push($datas, $this->getResponseOrg($org_name),$this->getOrgProjects($org_name),$this->getOrgMembers($org_name));
-		$this->showView("beranda",["datas"=>$datas]);
+		array_push($datas, $this->getResponseOrg($org_name), $this->getOrgProjects($org_name), $this->getOrgMembers($org_name));
+		$this->showView("beranda", ["datas" => $datas]);
+	}
+
+	public function add_to_db($org)
+	{
+		$res = $this->db->get_where('organisation', array('name' => $org))->result_array();
+		if (count($res) == 0) {
+			// Add Organisation
+			$this->add_org_to_db($org);
+
+			// Add Repository
+			$this->add_repo_to_db($org);
+
+		} else {
+			echo 'data sudah ada';
+		}
+	}
+
+	public function add_org_to_db($org)
+	{
+		$data = $this->getResponseOrg($org);
+		$new_record = array(
+			'name' => $data['login'],
+			'full_name' => $data['name'],
+			'follower' => $data['followers'],
+			'following' => $data['following']
+		);
+		$this->db->insert('organisation', $new_record);
+	}
+
+	public function add_repo_to_db($org)
+	{
+		// Add Repository
+		$datas = $this->getOrgRepos($org);
+		foreach ($datas as $data) {
+			$new_record = array(
+				'name' => $data['name'],
+				'full_name' => $data['full_name'],
+				'contributors_url' => $data['contributors_url'],
+				'languages_url' => $data['languages_url'],
+				'size' => $data['size'],
+			);
+			$this->db->insert('repository', $new_record);
+
+			// Add User in Repository
+			$this->add_user_to_db($data['contributors_url']);
+			$this->add_language_to_db($data['languages_url']);
+		}
+	}
+
+	public function add_user_to_db($url)
+	{
+		// Add User per Repository
+		// Harus ditambah constrain agar user yg di-insert tidak duplikat
+		$datas = $this->getResponse($url);
+		foreach ($datas as $data) {
+			$new_record = array(
+				'name' => $data['login'],
+				'avatar_url' => $data['avatar_url'],
+			);
+			
+			// Constraint biar tidak ada yang duplikat
+			$res = $this->db->get_where('user', array('name' => $data['login']))->result_array();
+			if (count($res) == 0){
+				$this->db->insert('user', $new_record);
+			}
+		}
+	}
+
+	public function add_language_to_db($url){
+		$datas = $this->getResponse($url);
+		foreach ($datas as $key => $value) {
+			$new_record = array(
+				'name' => $key,
+			);
+
+			// Constraint biar tidak ada yang duplikat
+			$res = $this->db->get_where('language', array('name' => $key))->result_array();
+			if (count($res) == 0){
+				$this->db->insert('language', $new_record);
+			}
+		}
+	}
+
+	public function add_repo_lang_to_db($fk_repo, $fk_lang, $value){
+		$new_record = array(
+			'fk_repo' => $fk_repo,
+			'fk_lang' => $fk_lang,
+			'value' => $value
+		);
+		$this->db->insert('repo_lang', $new_record);
 	}
 }
