@@ -8,11 +8,15 @@
 </head>
 <body>
     <?php
-        foreach ($datas as $data) {
-        ?>
-            <li> <?=$data['blog_id'];?> <li>
-        <?php
-        }
+    foreach ($datas as $data) {
+        $obj = $data;
+        echo $data['owner']['login'];   
+    ?>
+        <!-- <li> <?=$data['owner']['login'];?> <li> -->
+    
+
+    <?php
+    }
     ?>
 </body>
 </html>
