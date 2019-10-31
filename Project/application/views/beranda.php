@@ -1,3 +1,13 @@
+<?php
+	#script dummy,untuk test saja
+	#insert ke tabe
+	date_default_timezone_set("Asia/Jakarta");
+	$table = array(
+		array("org_name"=>"apache","date_added"=>date("Y/m/d H:i:s")),
+		array("org_name"=>"ifunpar","date_added"=>date("Y/m/d H:i:s"))
+	);
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +17,18 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script src="https://kit.fontawesome.com/e23a4bb5fc.js" crossorigin="anonymous"></script>
+	<script>
+		$(document).ready(function(){
+			$(".show-stat").click(function(){
+				$("#org_details").removeClass("d-none");
+				$("#org_table").addClass("d-none");
+			});
+			$("#btn_org_table").click(function(){
+				$("#org_details").addClass("d-none");
+				$("#org_table").removeClass("d-none");
+			});
+		});
+	</script>
 	<style>
 	html,body,.container{
 		height: 100%;
@@ -44,26 +66,59 @@
 			</div>	
 		</div>
 		<div class="row content">
-			<div class="content-tabs p-3 border-bottom border-light">
-				<h3>Cari Statistik</h3>
-				<form class="mt-3" id="frm_search" method="POST" action="form_submit">
+			<div class="content-tabs p-3 border-bottom border-light" id="org_table">
+				<h3>Daftar Organisasi</h3>
+				<form class="mt-3" id="frm_search" method="POST" action="test">
 					<div>
 						<div class="input-group">
 							<input type="text" class="form-control" placeholder="Nama Organisasi, Perusahaan atau lainnya" aria-label="Recipient's username" name="org_name">
 							<div class="input-group-append">
-								<button class="btn btn-success">Cari Statistik</button>
+								<button class="btn btn-success">Tambahkan Organisasi</button>
 							</div>
 						</div>
 					</div>
 				</form>
+				<br>
+				<table class="table table-hover" style="background-color: white">
+					<thead>
+						<tr>
+							<th scope="col">No Urut</th>
+      						<th scope="col">Nama Organisasi</th>
+      						<th scope="col">Tanggal Ditambahkan</th>
+      						<th scope="col">Aksi</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+							$i = 1;
+							if (is_array($table) || is_object($table))
+							{
+							foreach($table as $item){
+								echo "<tr>";
+								echo "<td scope='row'>".$i++."</td>";
+								echo "<td>".$item['org_name']."</td>";
+								echo "<td>".$item['date_added']."</td>";
+								echo "<td><i style='font-size:2em' class='fas fa-info-circle show-stat'></i></td>";
+								echo "</tr>";
+							}}
+						?>
+					</tbody>
+				</table>
 			</div>
-			<div class="content-tabs p-3">
+			<div class="content-tabs p-3 d-none" id="org_details">
 				<h3>Detail Organisasi</h3>
-				<?php 
-					if(isset($datas)){
-						echo "<div class='alert alert-light' role='alert'>Menampilkan Detail Organisasi yang dicari</div>";
-					}
-				?>
+				<div class='alert alert-light' role='alert'>
+					<div class="row align-items-center">
+						<div class="col">
+						Menampilkan Detail Organisasi yang dicari
+						</div>
+						<div class="col">
+							<div class="row justify-content-end mr-1">
+								<button id="btn_org_table" class="btn btn-success">Kembali Ke Daftar Organisasi</button>
+							</div>						
+						</div>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col">
 						<div class="card">
@@ -132,7 +187,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="content-tabs p-3">
+			<div class="content-tabs p-3 d-none">
 				<h3>Daftar Repository</h3>
 				<table class="table">
 					<thead>
