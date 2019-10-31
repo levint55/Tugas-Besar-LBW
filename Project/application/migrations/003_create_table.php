@@ -60,6 +60,11 @@ class Migration_create_table extends CI_Migration
                 'unsigned' => TRUE,
                 'auto_increment' => TRUE
             ),
+            'fk_org' => array(
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => TRUE
+            ),
             'name' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '100',
@@ -81,6 +86,7 @@ class Migration_create_table extends CI_Migration
             ),
         ));
         $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->add_field('CONSTRAINT FOREIGN KEY (fk_org) REFERENCES organisation(id)');
         $this->dbforge->create_table('repository');
     }
 
