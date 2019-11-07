@@ -27,7 +27,7 @@ class Welcome extends CI_Controller {
 			
 		]);
 		//fungsi ini untuk menambahkan organisasi ifunpar ke dalam list (tabel) organisasi
-		//$this->add_to_db('ifunpar');
+		// $this->add_to_db('ifunpar');
 	}
 
 	public function getResponseOrg($org)
@@ -182,8 +182,9 @@ class Welcome extends CI_Controller {
 			$this->db->from('user');
 			$this->db->where('name =', $data['login']);
 			$user_id = $this->db->get()->result_array()[0]['id'];
+			$contribution = $data['contributions'];
 			
-			$this->add_repo_user_to_db($repo_id, $user_id);
+			$this->add_repo_user_to_db($repo_id, $user_id, $contribution);
 		}
 	}
 
@@ -219,10 +220,11 @@ class Welcome extends CI_Controller {
 		$this->db->insert('repo_lang', $new_record);
 	}
 
-	public function add_repo_user_to_db($fk_repo, $fk_user){
+	public function add_repo_user_to_db($fk_repo, $fk_user, $contribution){
 		$new_record = array(
 			'fk_repo' => $fk_repo,
-			'fk_user' => $fk_user
+			'fk_user' => $fk_user,
+			'value' => $contribution
 		);
 		$this->db->insert('repo_user', $new_record);
 	}
