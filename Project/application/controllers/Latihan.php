@@ -27,7 +27,7 @@ class Latihan extends CI_Controller
 		// $this->load->view('latihan', [
 		// 	"datas"=> $data
 		// ]);
-		$this->add_to_db('ifunpar');
+		// $this->add_to_db('ifunpar');
 	}
 
 	public function getResponseOrg($org)
