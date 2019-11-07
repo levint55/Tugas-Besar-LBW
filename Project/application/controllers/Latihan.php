@@ -117,9 +117,10 @@ class Latihan extends CI_Controller
 		if (count($res) == 0) {
 			// Add Organisation
 			$this->add_org_to_db($org);
-
+			$last_inserted_id = $this->db->insert_id();
+			
 			// Add Repository
-			$this->add_repo_to_db($org);
+			$this->add_repo_to_db($org, $last_inserted_id);
 
 		} else {
 			echo 'data sudah ada';
@@ -138,7 +139,7 @@ class Latihan extends CI_Controller
 		$this->db->insert('organisation', $new_record);
 	}
 
-	public function add_repo_to_db($org)
+	public function add_repo_to_db($org, $org_id)
 	{
 		// Add Repository
 		$datas = $this->getOrgRepos($org);
@@ -149,16 +150,17 @@ class Latihan extends CI_Controller
 				'contributors_url' => $data['contributors_url'],
 				'languages_url' => $data['languages_url'],
 				'size' => $data['size'],
+				'fk_org' => $org_id
 			);
 			$this->db->insert('repository', $new_record);
-
+			$last_inserted_id = $this->db->insert_id();
 			// Add User in Repository
-			$this->add_user_to_db($data['contributors_url']);
-			$this->add_language_to_db($data['languages_url']);
+			$this->add_user_to_db($data['contributors_url'], $last_inserted_id);
+			$this->add_language_to_db($data['languages_url'], $last_inserted_id);
 		}
 	}
 
-	public function add_user_to_db($url)
+	public function add_user_to_db($url, $repo_id)
 	{
 		// Add User per Repository
 		// Harus ditambah constrain agar user yg di-insert tidak duplikat
@@ -174,10 +176,18 @@ class Latihan extends CI_Controller
 			if (count($res) == 0){
 				$this->db->insert('user', $new_record);
 			}
+
+			// Get User ID masih belum bisa
+			$this->db->select('id');
+			$this->db->from('user');
+			$this->db->where('name =', $data['login']);
+			$user_id = $this->db->get()->result_array()[0]['id'];
+			
+			$this->add_repo_user_to_db($repo_id, $user_id);
 		}
 	}
 
-	public function add_language_to_db($url){
+	public function add_language_to_db($url, $repo_id){
 		$datas = $this->getResponse($url);
 		foreach ($datas as $key => $value) {
 			$new_record = array(
@@ -189,6 +199,14 @@ class Latihan extends CI_Controller
 			if (count($res) == 0){
 				$this->db->insert('language', $new_record);
 			}
+
+			// Get Language ID masih belum bisa
+			$this->db->select('id');
+			$this->db->from('language');
+			$this->db->where('name =', $key);
+			$lang_id = $this->db->get()->result_array()[0]['id'];
+			
+			$this->add_repo_lang_to_db($repo_id, $lang_id, $value);
 		}
 	}
 
@@ -199,5 +217,13 @@ class Latihan extends CI_Controller
 			'value' => $value
 		);
 		$this->db->insert('repo_lang', $new_record);
+	}
+
+	public function add_repo_user_to_db($fk_repo, $fk_user){
+		$new_record = array(
+			'fk_repo' => $fk_repo,
+			'fk_user' => $fk_user
+		);
+		$this->db->insert('repo_user', $new_record);
 	}
 }

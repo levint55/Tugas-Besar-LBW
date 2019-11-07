@@ -12,13 +12,15 @@ class Migration_create_table extends CI_Migration
         $this->create_user();
         $this->create_language();
         $this->create_repo_lang();
+        $this->create_repo_user();
     }
 
     public function down()
     {
         $this->dbforge->drop_table('repo_lang');
-        $this->dbforge->drop_table('organisation');
+        $this->dbforge->drop_table('repo_user');
         $this->dbforge->drop_table('repository');
+        $this->dbforge->drop_table('organisation');
         $this->dbforge->drop_table('user');
         $this->dbforge->drop_table('language');
     }
@@ -157,5 +159,34 @@ class Migration_create_table extends CI_Migration
         $this->dbforge->add_field('CONSTRAINT FOREIGN KEY (fk_repo) REFERENCES repository(id)');
         $this->dbforge->add_field('CONSTRAINT FOREIGN KEY (fk_lang) REFERENCES language(id)');
         $this->dbforge->create_table('repo_lang');
+    }
+
+    public function create_repo_user()
+    {
+        $this->dbforge->add_field(array(
+            'id' => array(
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => TRUE,
+                'auto_increment' => TRUE
+            ),
+            'fk_repo' => array(
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => TRUE,
+            ),
+            'fk_user' => array(
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => TRUE,
+            ),
+            'value' => array(
+                'type' => 'INT'
+            ),
+        ));
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->add_field('CONSTRAINT FOREIGN KEY (fk_repo) REFERENCES repository(id)');
+        $this->dbforge->add_field('CONSTRAINT FOREIGN KEY (fk_user) REFERENCES user(id)');
+        $this->dbforge->create_table('repo_user');
     }
 }
