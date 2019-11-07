@@ -121,72 +121,122 @@
 				</div>
 				<div class="row">
 					<div class="col">
-						<div class="card">
-							<div class="row align-items-center justify-content-center">
-							<span style="font-size: 5em"><i class="fas fa-code-branch"></i></span>
+						<div class="accordion" id="accordionExample">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseTwo">
+									<div class="card">
+										<div class="row align-items-center justify-content-center">
+											<span style="font-size: 5em"><i class="fas fa-code-branch"></i></span>
+										</div>
+											
+										<div class="card-header" id="headingOne" style="text-align: center">
+											<?php 
+												//isi array datas:
+												//indeks ke-0 : data repo
+												//indeks ke-1 : data proyek
+												//indeks ke-2 : data anggota
+												if(isset($datas)){
+													echo sizeof($datas[0])." Repository";
+												}else{
+													echo "Temukan repository yang ada";
+												} 
+											?>
+										</div>	
+									</div>
+							</button>
+							<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+								<div class="card-body">
+									Uwow bisa begini
+								</div>
+							</div>	
 						</div>
-						<div class="card-body" style="text-align: center">
-							<?php 
-								//isi array datas:
-								//indeks ke-0 : data repo
-								//indeks ke-1 : data proyek
-								//indeks ke-2 : data anggota
-								if(isset($datas)){
-									echo sizeof($datas[0])." Repository";
-								}else{
-									echo "Temukan repository yang ada";
-								} 
-							?>
-						</div>	
-						</div>		
 					</div>
+
 					<div class="col">
-						<div class="card">
-						<div class="row align-items-center justify-content-center">
-						<span style="font-size: 5em"><i class="fas fa-tasks"></i></span>
-						</div>
-						<div class="card-body" style="text-align: center">
-							<?php 
-								//isi array datas:
-								//indeks ke-0 : data repo
-								//indeks ke-1 : data proyek
-								//indeks ke-2 : data anggota
-								if(isset($datas)){
-									echo sizeof($datas[1])." Proyek";
-								}else{
-									echo "Temukan Proyek-proyek yang ada";
-								} 
-							?>
-						</div>
+						<div class="accordion" id="accordionExample">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+								<div class="card">
+									<div class="row align-items-center justify-content-center">
+										<span style="font-size: 5em"><i class="fas fa-tasks"></i></span>
+									</div>
+									<div class="card-header" id="headingTwo" style="text-align: center">
+										<?php 
+											//isi array datas:
+											//indeks ke-0 : data repo
+											//indeks ke-1 : data proyek
+											//indeks ke-2 : data anggota
+											if(isset($datas)){
+												echo sizeof($datas[1])." Proyek";
+											}else{
+												echo "Temukan Proyek-proyek yang ada";
+											} 
+										?>
+									</div>
+								</div>
+							</button>
+							<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+								<div class="card-body">
+									Uwow bisa begini
+								</div>
+							</div>	
 						</div>
 					</div>
+
 					<div class="col">
-						<div class="card">
-						<div class="row align-items-center justify-content-center">
-						<span style="font-size: 5em"><i class="fas fa-user-friends"></i></span>
-						</div>
-						<div class="card-body" style="text-align: center">
-							<?php 
-								//isi array datas:
-								//indeks ke-0 : data repo
-								//indeks ke-1 : data proyek
-								//indeks ke-2 : data anggota
-								if(isset($datas)){
-									echo sizeof($datas[2])." Anggota";
-								}else{
-									echo "Temukan orang-orang yang berkontribusi";
-								} 
-							?>
-						</div>
+						<div class="accordion" id="accordionExample">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+								<div class="card">
+									<div class="row align-items-center justify-content-center">
+										<span style="font-size: 5em"><i class="fas fa-user-friends"></i></span>
+									</div>
+									<div class="card-header" id="headingThree" style="text-align: center">
+										<?php 
+											//isi array datas:
+											//indeks ke-0 : data repo
+											//indeks ke-1 : data proyek
+											//indeks ke-2 : data anggota
+											if(isset($datas)){
+												echo sizeof($datas[2])." Anggota";
+											}else{
+												echo "Temukan orang-orang yang berkontribusi";
+											} 
+										?>
+									</div>
+								</div>
+							</button>
+							<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+								<div class="card-body">
+									Ini Ketiga
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row justify-content-center">
-					<div class="p-2">
-					<strong>Klik salah satu untuk informasi lebih lanjut</strong>
+				
+				<!-- Ini tambahan dari Anton buat ada Accordion/Dropdown di gambarnya kalau di klik -->
+				<!-- <div class="accordion" id="accordionExample">
+					<div class="card">
+						<div class="card-header" id="headingTwo">
+						<h2 class="mb-0">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							Collapsible Group Item #2
+							</button>
+						</h2>
+						</div>
+						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+							<div class="card-body">
+								Uwow bisa begini
+							</div>
+						</div>
 					</div>
+				</div> -->
+				
+				
+			</div>
+			<div class="row justify-content-center">
+				<div class="p-2">
+				<strong>Klik salah satu untuk informasi lebih lanjut</strong>
 				</div>
 			</div>
+
 			<div class="content-tabs p-3 d-none">
 				<h3>Daftar Repository</h3>
 				<table class="table">
