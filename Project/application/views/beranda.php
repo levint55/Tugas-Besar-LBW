@@ -1,12 +1,3 @@
-<?php
-	#script dummy,untuk test saja
-	#insert ke tabe
-	date_default_timezone_set("Asia/Jakarta");
-	$table = array(
-		array("org_name"=>"apache","date_added"=>date("Y/m/d H:i:s")),
-		array("org_name"=>"ifunpar","date_added"=>date("Y/m/d H:i:s"))
-	);
-?>
 
 <!DOCTYPE html>
 <html>
@@ -18,8 +9,12 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script src="https://kit.fontawesome.com/e23a4bb5fc.js" crossorigin="anonymous"></script>
 	<script>
+		var statButton;
 		$(document).ready(function(){
-			$(".show-stat").click(function(){
+			$(".show-stat").click(function(e){
+				statButton  = e.target;
+				console.log(statButton.getAttribute('data-id'));
+
 				$("#org_details").removeClass("d-none");
 				$("#org_table").addClass("d-none");
 			});
@@ -68,7 +63,7 @@
 		<div class="row content">
 			<div class="content-tabs p-3 border-bottom border-light" id="org_table">
 				<h3>Daftar Organisasi</h3>
-				<form class="mt-3" id="frm_search" method="POST" action="test">
+				<form class="mt-3" id="frm_search" method="POST" action="Welcome/form_submit">
 					<div>
 						<div class="input-group">
 							<input type="text" class="form-control" placeholder="Nama Organisasi, Perusahaan atau lainnya" aria-label="Recipient's username" name="org_name">
@@ -82,25 +77,30 @@
 				<table class="table table-hover" style="background-color: white">
 					<thead>
 						<tr>
-							<th scope="col">No Urut</th>
-      						<th scope="col">Nama Organisasi</th>
-      						<th scope="col">Tanggal Ditambahkan</th>
+							<th scope="col">Id</th>
+							<th scope="col">Query</th>
+      						<th scope="col">Nama Lengkap Organisasi</th>
+      						<th scope="col">Follower</th>
+      						<th scope="col">Following</th>
       						<th scope="col">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php
 							$i = 1;
-							if (is_array($table) || is_object($table))
+							if (is_array($rows) || is_object($rows))
 							{
-							foreach($table as $item){
-								echo "<tr>";
-								echo "<td scope='row'>".$i++."</td>";
-								echo "<td>".$item['org_name']."</td>";
-								echo "<td>".$item['date_added']."</td>";
-								echo "<td><i style='font-size:2em' class='fas fa-info-circle show-stat'></i></td>";
-								echo "</tr>";
-							}}
+								foreach($rows as $row){
+									echo "<tr>";
+									echo "<td>".$row['id']."</td>";
+									echo "<td>".$row['name']."</td>";
+									echo "<td>".$row['full_name']."</td>";
+									echo "<td>".$row['follower']."</td>";
+									echo "<td>".$row['following']."</td>";
+									echo "<td><i style='font-size:2em' data-id=".$row['id']." class='fas fa-info-circle show-stat'></i></td>";
+									echo "</tr>";
+								}
+							}
 						?>
 					</tbody>
 				</table>
