@@ -122,7 +122,7 @@
 				<div class="row">
 					<div class="col">
 						<div class="accordion" id="accordionExample">
-							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseTwo">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 									<div class="card">
 										<div class="row align-items-center justify-content-center">
 											<span style="font-size: 5em"><i class="fas fa-code-branch"></i></span>
