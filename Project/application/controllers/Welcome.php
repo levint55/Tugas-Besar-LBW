@@ -21,6 +21,9 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		$this->load->database();
+
+		$query = $this->db->query('SELECT id,name,full_name,follower,following FROM organisation');
+		$rows = $query->result_array();
 		$this->load->view('beranda',[
 			"rows" => $rows
 		]);
