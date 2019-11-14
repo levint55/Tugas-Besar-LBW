@@ -21,6 +21,13 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		$this->load->database();
+
+		// Contoh penerapan method get
+		// $org = $this->get_org_from_db('ifunpar');
+		// $repos = $this->get_repo_from_db($org[0]['id']);
+		// $languages = $this->get_repo_lang_from_db($repos[0]['id']);
+		// $contributors = $this->get_user_from_db($repos[0]['id']);
+
 		// $query = $this->db->get_where('blog', array('blog_id' => 1));
 		// $data = $query->result_array();
 		// $this->load->view('beranda', [
