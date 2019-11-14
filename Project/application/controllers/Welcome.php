@@ -120,20 +120,24 @@ class Welcome extends CI_Controller {
 		$res = $this->db->get_where('organisation', array('name' => $org))->result_array();
 		if (count($res) == 0) {
 			// Add Organisation
-			$this->add_org_to_db($org);
-			$last_inserted_id = $this->db->insert_id();
-			
-			// Add Repository
-			$this->add_repo_to_db($org, $last_inserted_id);
+			$data = $this->getResponseOrg($org);
+			if (array_key_exists('message', $data)){
+				echo 'organisasi tidak ditemukan';
+			} else {
+				$this->add_org_to_db($data);
+				$last_inserted_id = $this->db->insert_id();
+				
+				// Add Repository
+				$this->add_repo_to_db($org, $last_inserted_id);
+			}
 
 		} else {
 			echo 'data sudah ada';
 		}
 	}
 
-	public function add_org_to_db($org)
+	public function add_org_to_db($data)
 	{
-		$data = $this->getResponseOrg($org);
 		$new_record = array(
 			'name' => $data['login'],
 			'full_name' => $data['name'],
