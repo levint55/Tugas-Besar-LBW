@@ -126,7 +126,7 @@
 				<div class="row">
 					<div class="col">
 						<div class="accordion" id="accordionExample1">
-							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 									<div class="card">
 										<div class="row align-items-center justify-content-center">
 											<span style="font-size: 5em"><i class="fas fa-code-branch"></i></span>
@@ -188,7 +188,7 @@
 
 					<div class="col">
 						<div class="accordion" id="accordionExample2">
-							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
 								<div class="card">
 									<div class="row align-items-center justify-content-center">
 										<span style="font-size: 5em"><i class="fas fa-tasks"></i></span>
@@ -249,7 +249,7 @@
 
 					<div class="col">
 						<div class="accordion" id="accordionExample3">
-							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
 								<div class="card">
 									<div class="row align-items-center justify-content-center">
 										<span style="font-size: 5em"><i class="fas fa-user-friends"></i></span>
