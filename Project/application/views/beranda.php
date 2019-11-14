@@ -1,12 +1,3 @@
-<?php
-	#script dummy,untuk test saja
-	#insert ke tabe
-	date_default_timezone_set("Asia/Jakarta");
-	$table = array(
-		array("org_name"=>"apache","date_added"=>date("Y/m/d H:i:s")),
-		array("org_name"=>"ifunpar","date_added"=>date("Y/m/d H:i:s"))
-	);
-?>
 
 <!DOCTYPE html>
 <html>
@@ -14,12 +5,52 @@
 	<title></title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script src="https://kit.fontawesome.com/e23a4bb5fc.js" crossorigin="anonymous"></script>
 	<script>
+		var statButton;
+		var orgID;
+
+		//kirim http GET request , secara SYNCHRONOUS
+		function httpGetRequest(url){
+			var data;
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function(){
+				data = this.responseText;
+			}
+			request.open('GET',url,false);
+			request.send();
+			return data;
+		}
+		//get dari database, lalu tampilkan ke tabel
+		function getReposFromDB(orgID){
+				var orgRepos;
+    			//isi dengan method di Welcome.php dam idOrganisasi nya
+				orgRepos = httpGetRequest('Welcome/test2/'+orgID);
+			return orgRepos;
+		}
+		//dapatkan seluruh member pada REPO tertentu
+		//dapatkan juga nilai kontribusi tiap member pada repo
+		function getMembersFromDB(repoID){
+			var repoMembers;
+			repoMembers = httpGetRequest('Welcome/test2/'+repoID);
+			return repoMembers;
+		}
+
+		function getRepoLang(repoID){
+			var repoLang;
+			repoLang = httpGetRequest('Welcome/test2/'+repoID);
+			return repoLang;
+		}
+
 		$(document).ready(function(){
-			$(".show-stat").click(function(){
+			$(".show-stat").click(function(e){
+				statButton  = e.target;
+				orgID = statButton.getAttribute('data-id')
+				
+
 				$("#org_details").removeClass("d-none");
 				$("#org_table").addClass("d-none");
 			});
@@ -68,7 +99,7 @@
 		<div class="row content">
 			<div class="content-tabs p-3 border-bottom border-light" id="org_table">
 				<h3>Daftar Organisasi</h3>
-				<form class="mt-3" id="frm_search" method="POST" action="test">
+				<form class="mt-3" id="frm_search" method="POST" action="Welcome/form_submit">
 					<div>
 						<div class="input-group">
 							<input type="text" class="form-control" placeholder="Nama Organisasi, Perusahaan atau lainnya" aria-label="Recipient's username" name="org_name">
@@ -82,25 +113,30 @@
 				<table class="table table-hover" style="background-color: white">
 					<thead>
 						<tr>
-							<th scope="col">No Urut</th>
-      						<th scope="col">Nama Organisasi</th>
-      						<th scope="col">Tanggal Ditambahkan</th>
+							<th scope="col">Id</th>
+							<th scope="col">Query</th>
+      						<th scope="col">Nama Lengkap Organisasi</th>
+      						<th scope="col">Follower</th>
+      						<th scope="col">Following</th>
       						<th scope="col">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php
 							$i = 1;
-							if (is_array($table) || is_object($table))
+							if (is_array($rows) || is_object($rows))
 							{
-							foreach($table as $item){
-								echo "<tr>";
-								echo "<td scope='row'>".$i++."</td>";
-								echo "<td>".$item['org_name']."</td>";
-								echo "<td>".$item['date_added']."</td>";
-								echo "<td><i style='font-size:2em' class='fas fa-info-circle show-stat'></i></td>";
-								echo "</tr>";
-							}}
+								foreach($rows as $row){
+									echo "<tr>";
+									echo "<td>".$row['id']."</td>";
+									echo "<td>".$row['name']."</td>";
+									echo "<td>".$row['full_name']."</td>";
+									echo "<td>".$row['follower']."</td>";
+									echo "<td>".$row['following']."</td>";
+									echo "<td><i style='font-size:2em' data-id=".$row['id']." class='fas fa-info-circle show-stat'></i></td>";
+									echo "</tr>";
+								}
+							}
 						?>
 					</tbody>
 				</table>
@@ -110,7 +146,7 @@
 				<div class='alert alert-light' role='alert'>
 					<div class="row align-items-center">
 						<div class="col">
-						Menampilkan Detail Organisasi yang dicari
+						<span id="span_org_name">Menampilkan Detail Organisasi</span>
 						</div>
 						<div class="col">
 							<div class="row justify-content-end mr-1">

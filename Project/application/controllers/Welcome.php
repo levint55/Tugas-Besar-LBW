@@ -21,6 +21,9 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		$this->load->database();
+		$this->load->view('beranda',[
+			"rows" => $rows
+		]);
 
 		// Contoh penerapan method get
 		// $org = $this->get_org_from_db('ifunpar');
@@ -28,11 +31,6 @@ class Welcome extends CI_Controller {
 		// $languages = $this->get_repo_lang_from_db($repos[0]['id']);
 		// $contributors = $this->get_user_from_db($repos[0]['id']);
 
-		// $query = $this->db->get_where('blog', array('blog_id' => 1));
-		// $data = $query->result_array();
-		// $this->load->view('beranda', [
-			
-		// ]);
 		//fungsi ini untuk menambahkan organisasi ifunpar ke dalam list (tabel) organisasi
 		// $this->add_to_db('ifunpar');
 	}
@@ -109,13 +107,9 @@ class Welcome extends CI_Controller {
 	public function form_submit()
 	{
 		$org_name = $this->input->post('org_name');
-		//isi array datas:
-		//indeks ke-0 : data repo
-		//indeks ke-1 : data proyek
-		//indeks ke-2 : data anggota
-		$datas = array();
-		array_push($datas, $this->getResponseOrg($org_name), $this->getOrgProjects($org_name), $this->getOrgMembers($org_name));
-		$this->showView("beranda", ["datas" => $datas]);
+		echo $org_name;
+		$this->load->database();
+		$this->add_to_db($org_name);
 	}
 
 	public function add_to_db($org)
