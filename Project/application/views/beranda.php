@@ -125,8 +125,8 @@
 				</div>
 				<div class="row">
 					<div class="col">
-						<div class="accordion" id="accordionExample">
-							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+						<div class="accordion" id="accordionExample1">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 									<div class="card">
 										<div class="row align-items-center justify-content-center">
 											<span style="font-size: 5em"><i class="fas fa-code-branch"></i></span>
@@ -145,19 +145,50 @@
 												} 
 											?>
 										</div>	
-									</div>
+									</div> 
 							</button>
-							<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+							<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample1">
 								<div class="card-body">
-									Uwow bisa begini
+									<div class="table-responsive-xl">
+										<table class="table table-sm table-striped">
+											<thead class="thead-dark">
+												<tr>
+													<th scope="col">Id</th>
+													<th scope="col">Name</th>
+													<th scope="col">Full_name</th>
+													<th scope="col">Contributors_url</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<th scope="row">1</th>
+													<td>SharIF-Judge</td>
+													<td>ifunpar/SharIF-Judge</td>
+													<td>https://api.github.com/repos/ifunpar/SharIF-Judge/contributors</td>
+												</tr>
+												<tr>
+													<th scope="row">2</th>
+													<td>CubeRun</td>
+													<td>ifunpar/CubeRun</td>
+													<td>https://api.github.com/repos/ifunpar/CubeRun/contributors</td>
+												</tr>
+												<tr>
+													<th scope="row">3</th>
+													<td>AplikasiPratinjau3Dimensi</td>
+													<td>ifunpar/AplikasiPratinjau3Dimensi</td>
+													<td>https://api.github.com/repos/ifunpar/AplikasiPratinjau3Dimensi/contributors</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>	
 						</div>
 					</div>
 
 					<div class="col">
-						<div class="accordion" id="accordionExample">
-							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+						<div class="accordion" id="accordionExample2">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
 								<div class="card">
 									<div class="row align-items-center justify-content-center">
 										<span style="font-size: 5em"><i class="fas fa-tasks"></i></span>
@@ -177,17 +208,48 @@
 									</div>
 								</div>
 							</button>
-							<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+							<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample2">
 								<div class="card-body">
-									Uwow bisa begini
+									<div class="table-responsive-xl">
+										<table class="table table-sm table-striped">
+											<thead class="thead-dark">
+												<tr>
+													<th scope="col">Id</th>
+													<th scope="col">Name</th>
+													<th scope="col">Last</th>
+													<th scope="col">Handle</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<th scope="row">1</th>
+													<td>Mark</td>
+													<td>Otto</td>
+													<td>@mdo</td>
+												</tr>
+												<tr>
+													<th scope="row">2</th>
+													<td>Jacob</td>
+													<td>Thornton</td>
+													<td>@fat</td>
+												</tr>
+												<tr>
+													<th scope="row">3</th>
+													<td>Larry</td>
+													<td>the Bird</td>
+													<td>@twitter</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>	
 						</div>
 					</div>
 
 					<div class="col">
-						<div class="accordion" id="accordionExample">
-							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+						<div class="accordion" id="accordionExample3">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
 								<div class="card">
 									<div class="row align-items-center justify-content-center">
 										<span style="font-size: 5em"><i class="fas fa-user-friends"></i></span>
@@ -207,9 +269,32 @@
 									</div>
 								</div>
 							</button>
-							<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+							<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample3">
 								<div class="card-body">
-									Ini Ketiga
+									<div class="table-responsive-xl">
+										<table class="table table-sm table-striped">
+											<thead class="thead-dark">
+												<tr>
+													<th scope="col">Id</th>
+													<th scope="col">Name</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<th scope="row">1</th>
+													<td>mjnaderi</td>
+												</tr>
+												<tr>
+													<th scope="row">2</th>
+													<td>ayenz</td>
+												</tr>
+												<tr>
+													<th scope="row">3</th>
+													<td>pascalalfadian</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>
