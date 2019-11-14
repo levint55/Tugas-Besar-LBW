@@ -23,9 +23,9 @@ class Welcome extends CI_Controller {
 		$this->load->database();
 		// $query = $this->db->get_where('blog', array('blog_id' => 1));
 		// $data = $query->result_array();
-		$this->load->view('beranda', [
+		// $this->load->view('beranda', [
 			
-		]);
+		// ]);
 		//fungsi ini untuk menambahkan organisasi ifunpar ke dalam list (tabel) organisasi
 		// $this->add_to_db('ifunpar');
 	}
@@ -227,5 +227,63 @@ class Welcome extends CI_Controller {
 			'value' => $contribution
 		);
 		$this->db->insert('repo_user', $new_record);
+	}
+
+	public function get_org_from_db($org){
+		$this->db->select();
+		$this->db->from('organisation');
+		$this->db->where('name =', $org);
+		
+		$result = $this->db->get()->result_array();
+		
+		if (count($result) == 0){
+			echo "Organisasi tidak ditemukan";
+		} else {
+			return $result;
+		}
+	}
+
+	public function get_repo_from_db($fk_org){
+		$this->db->select();
+		$this->db->from('repository');
+		$this->db->where('fk_org =', $fk_org);
+		
+		$result = $this->db->get()->result_array();
+		
+		if (count($result) == 0){
+			echo "Repository tidak ditemukan";
+		} else {
+			return $result;
+		}
+	}
+
+	public function get_user_from_db($fk_repo){
+		$this->db->select();
+		$this->db->from('repo_user');
+		$this->db->join('user', 'repo_user.fk_user = user.id');
+		$this->db->where('repo_user.fk_repo =', $fk_repo);
+
+		$result = $this->db->get()->result_array();
+
+		if (count($result) == 0){
+			echo "Repository tidak memiliki contributor";
+		} else {
+			return $result;
+		}
+	}
+
+	public function get_repo_lang_from_db($fk_repo){
+		$this->db->select();
+		$this->db->from('repo_lang');
+		$this->db->join('language', 'repo_lang.fk_lang = language.id');
+		$this->db->where('repo_lang.fk_repo =', $fk_repo);
+
+		$result = $this->db->get()->result_array();
+
+		if (count($result) == 0){
+			echo "Repository tidak memiliki language";
+		} else {
+			return $result;
+		}
 	}
 }
