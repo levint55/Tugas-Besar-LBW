@@ -3,6 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Welcome extends CI_Controller {
 
+	public function __construct() {
+		parent::__construct();
+		$this->load->library('session');
+	}
+
 	/**
 	 * Index Page for this controller.
 	 *
@@ -20,6 +25,7 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
+		// $this->load->view('alert');
 		$this->load->database();
 
 		$query = $this->db->query('SELECT id,name,full_name,follower,following FROM organisation');
@@ -132,6 +138,7 @@ class Welcome extends CI_Controller {
 
 	public function form_submit()
 	{
+		header("Location: /");
 		$org_name = $this->input->post('org_name');
 		echo $org_name;
 		$this->load->database();
@@ -145,17 +152,18 @@ class Welcome extends CI_Controller {
 			// Add Organisation
 			$data = $this->getResponseOrg($org);
 			if (array_key_exists('message', $data)){
-				echo 'organisasi tidak ditemukan';
+				$this->session->set_flashdata('error', 'Organisasi tidak ditemukan.');
 			} else {
 				$this->add_org_to_db($data);
 				$last_inserted_id = $this->db->insert_id();
 				
 				// Add Repository
 				$this->add_repo_to_db($org, $last_inserted_id);
+				$this->session->set_flashdata('success', 'Data berhasil dimasukkan');
 			}
 
 		} else {
-			echo 'data sudah ada';
+			$this->session->set_flashdata('warning', 'Data sudah ada.');
 		}
 	}
 
