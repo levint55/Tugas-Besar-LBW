@@ -173,7 +173,7 @@ class Welcome extends CI_Controller {
 			'name' => $data['login'],
 			'full_name' => $data['name'],
 			'follower' => $data['followers'],
-			'following' => $data['following']
+			'following' => $data['following'],
 		);
 		$this->db->insert('organisation', $new_record);
 	}
@@ -189,7 +189,8 @@ class Welcome extends CI_Controller {
 				'contributors_url' => $data['contributors_url'],
 				'languages_url' => $data['languages_url'],
 				'size' => $data['size'],
-				'fk_org' => $org_id
+				'fk_org' => $org_id,
+				'description' => $data['description'],
 			);
 			$this->db->insert('repository', $new_record);
 			$last_inserted_id = $this->db->insert_id();
