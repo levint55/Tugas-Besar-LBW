@@ -134,6 +134,9 @@
 		width: 100%;
 	}
 </style>
+<?php 
+		$this->load->view('alert');
+?>
 </head>
 <body>
 	<div class="container">
