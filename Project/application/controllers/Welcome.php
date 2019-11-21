@@ -69,17 +69,20 @@ class Welcome extends CI_Controller {
 
 	//function khusus untuk menghandle request via javascript
 	public function getRepoFromDB($fk_org){
-		echo $this->get_repo_from_db($fk_org);
+		$this->load->database();
+		echo json_encode($this->get_repo_from_db($fk_org));
 	}
 
 	//function khusus untuk menghandle request via javascript
 	public function getUserFromDB($fk_repo){
-		echo $this->get_user_from_db($fk_repo);
+		$this->load->database();
+		echo json_encode($this->get_user_from_db($fk_repo));
 	}
 
 	//function khusus untuk menghandle request via javascript
 	public function getRepoLangFromDB($fk_repo){
-		echo $this->get_repo_lang_from_db($fk_repo);
+		$this->load->database();
+		echo json_encode($this->get_repo_lang_from_db($fk_repo));
 	}
 
 	//REFS: https://developer.github.com/v3/projects/#list-repository-projects

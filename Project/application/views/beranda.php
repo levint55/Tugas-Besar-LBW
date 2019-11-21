@@ -9,9 +9,12 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script src="https://kit.fontawesome.com/e23a4bb5fc.js" crossorigin="anonymous"></script>
-	<script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
 		var statButton;
 		var orgID;
+		var orgRepos;
+		var orgMembers;
 
 		//kirim http GET request , secara SYNCHRONOUS
 		function httpGetRequest(url){
@@ -28,28 +31,67 @@
 		function getReposFromDB(orgID){
 				var orgRepos;
     			//isi dengan method di Welcome.php dam idOrganisasi nya
-				orgRepos = httpGetRequest('Welcome/test2/'+orgID);
-			return orgRepos;
+				orgRepos = httpGetRequest('Welcome/getRepoFromDB/'+orgID);
+			return JSON.parse(orgRepos);
 		}
 		//dapatkan seluruh member pada REPO tertentu
 		//dapatkan juga nilai kontribusi tiap member pada repo
 		function getMembersFromDB(repoID){
 			var repoMembers;
-			repoMembers = httpGetRequest('Welcome/test2/'+repoID);
-			return repoMembers;
+			repoMembers = httpGetRequest('Welcome/getUserFromDB/'+repoID);
+			return JSON.parse(repoMembers);
 		}
 
 		function getRepoLang(repoID){
 			var repoLang;
-			repoLang = httpGetRequest('Welcome/test2/'+repoID);
-			return repoLang;
+			repoLang = httpGetRequest('Welcome/getRepoLangFromDB/'+repoID);
+			return JSON.parse(repoLang);
 		}
 
+		function drawChart(){
+      		var chartData = new Array(orgRepos.length+1);
+      		console.log(chartData.length);
+      		chartData[0] = new Array(2);
+      		chartData[0][0] = 'Repository';
+      		chartData[0][1] = 'Ukuran';
+      		for(var i = 1; i < chartData.length; i++){
+      			chartData[i] = new Array(2);
+      			chartData[i][0] = orgRepos[i-1]['name'];
+      			chartData[i][1] = parseInt(orgRepos[i-1]['size']);
+      		}
+      		console.log(chartData);
+      		var data = google.visualization.arrayToDataTable(chartData);
+
+      		var options = {
+          		title: 'statistik ukuran repo'
+        	};
+
+        	var chart = new google.visualization.ColumnChart(document.getElementById('piechart_repo_size'));
+
+        	chart.draw(data, options);
+      	}
+
 		$(document).ready(function(){
+
 			$(".show-stat").click(function(e){
 				statButton  = e.target;
 				orgID = statButton.getAttribute('data-id')
-				
+				orgRepos = getReposFromDB(orgID);
+
+				var key;
+				//show all org repos
+				$("#table_org_repo").html('');
+				for(i = 0,len = orgRepos.length;i <len; i++){
+					var repo = orgRepos[i];
+					$("#table_org_repo").append(
+						'<tr>'+"<td scope='row'>"+repo['id']+"</td>"+"<td>"+repo['size']+"</td>"+"<td>"+repo['name']+"</td>"+"<td>"+repo['full_name']+"</td>"+"<td>"+repo['contributors_url']+"</td>"+"</tr>"
+					);
+				}
+				//draw pie chart disini
+				google.charts.load('current', {'packages':['corechart']});
+      			google.charts.setOnLoadCallback(drawChart);
+
+
 
 				$("#org_details").removeClass("d-none");
 				$("#org_table").addClass("d-none");
@@ -182,49 +224,13 @@
 											?>
 										</div>	
 									</div> 
-							</button>
-							<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample1">
-								<div class="card-body">
-									<div class="table-responsive-xl">
-										<table class="table table-sm table-striped">
-											<thead class="thead-dark">
-												<tr>
-													<th scope="col">Id</th>
-													<th scope="col">Name</th>
-													<th scope="col">Full_name</th>
-													<th scope="col">Contributors_url</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<th scope="row">1</th>
-													<td>SharIF-Judge</td>
-													<td>ifunpar/SharIF-Judge</td>
-													<td>https://api.github.com/repos/ifunpar/SharIF-Judge/contributors</td>
-												</tr>
-												<tr>
-													<th scope="row">2</th>
-													<td>CubeRun</td>
-													<td>ifunpar/CubeRun</td>
-													<td>https://api.github.com/repos/ifunpar/CubeRun/contributors</td>
-												</tr>
-												<tr>
-													<th scope="row">3</th>
-													<td>AplikasiPratinjau3Dimensi</td>
-													<td>ifunpar/AplikasiPratinjau3Dimensi</td>
-													<td>https://api.github.com/repos/ifunpar/AplikasiPratinjau3Dimensi/contributors</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>	
+							</button>	
 						</div>
 					</div>
 
 					<div class="col">
 						<div class="accordion" id="accordionExample2">
-							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 								<div class="card">
 									<div class="row align-items-center justify-content-center">
 										<span style="font-size: 5em"><i class="fas fa-tasks"></i></span>
@@ -362,21 +368,35 @@
 				</div>
 			</div>
 
-			<div class="content-tabs p-3 d-none">
-				<h3>Daftar Repository</h3>
-				<table class="table">
-					<thead>
-						<tr>
-							<th scope="col">Id Repository</th>
-      						<th scope="col">Nama Repository</th>
-      						<th scope="col">Tanggal</th>
-      						<th scope="col">Lain</th>
-						</tr>
-					</thead>
-					<tbody>
-						
-					</tbody>
-				</table>
+			<div class="content-tabs p-3">
+				
+				<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample1">
+								<div class="card-body" id="repo_details">
+									<h3>Statistik Ukuran Repository</h3>
+									<div id="piechart_repo_size">
+										
+									</div>
+									<h3>Daftar Repository</h3>
+									<div class="table-responsive-xl">
+										<table class="table table-sm table-striped">
+											<thead class="thead-dark">
+												<tr>
+													<th scope="col">Id</th>
+													<th scope="col">Size</th>
+													<th scope="col">Name</th>
+													<th scope="col">Full_name</th>
+													<th scope="col">Contributors_url</th>
+												</tr>
+											</thead>
+											<tbody id="table_org_repo">
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="card-body d-none" id="org_members">
+									
+								</div>
+							</div>	
 			</div>
 		</div>
 	</div>
