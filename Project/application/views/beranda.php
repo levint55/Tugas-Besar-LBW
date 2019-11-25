@@ -117,7 +117,13 @@
       		for(key in orgMembers){
       			chartData[i] = new Array(2);
       			chartData[i][0] = key;
-      			chartData[i][1] = parseInt(orgMembers[key]);
+      			var tmp = orgMembers[key];
+      			var repos;
+      			chartData[i][1]=0;
+      			for(repos in tmp){
+      				chartData[i][1] += parseInt(tmp[repos]);
+      			}
+      			
       			i++;
       		}
       		//console.log(orgMembers);
@@ -142,8 +148,8 @@
 				statButton  = e.target;
 				orgID = statButton.getAttribute('data-id')
 				orgRepos = getReposFromDB(orgID);
-				
-				var key;
+				orgLang = [];
+				orgMembers = [];
 				//show all org repos
 				$("#table_org_repo").html('');
 				for(i = 0,len = orgRepos.length;i <len; i++){
@@ -158,11 +164,9 @@
       					var member = record[j];
       					console.log(member);
       					if(!(member['name'] in orgMembers)){
-      						orgMembers[member['name']]=parseInt(member['value']);
-      						$("#table_org_members").append('<tr>'+"<td scope='row'>"+member['id']+"</td>"+"<td>"+member['name']+"</td>"+'</tr>');
-      					}else{
-      						orgMembers[member['name']]+=parseInt(member['value']);
+      						orgMembers[member['name']]=[];	
       					}
+      					orgMembers[member['name']][repo['name']]=parseInt(member['value']);
       				}
       				//gambar chart
       				var temp = getRepoLang(repo['id']);
@@ -176,6 +180,17 @@
       					}
       				}
       				//console.log(orgLang);
+				}
+				var key;
+				for(key in orgMembers){
+					var memberContribution = orgMembers[key];
+					var repoName;
+					var str = '<tr>'+"<td>"+key+"</td> "+"<td>";
+					for(repoName in memberContribution){
+						str +="<strong>"+repoName+"</strong>"+" ("+memberContribution[repoName]+" commit) ";
+					} 
+					str += "</tr>";
+					$("#table_org_members").append(str);
 				}
 
 				$("#repo_count").html("<h3 style='margin-bottom: 0'><strong>"+orgRepos.length + "</h3></strong> Repository");
@@ -418,13 +433,13 @@
 									<div id="member_commits">
 										
 									</div>
-									<h3>Data Member</h3>
+									<h3>Data Kontribusi Member</h3>
 									<div class="table-hover table-responsive-xl bg-white">
 										<table class="table table-sm table-striped">
 											<thead class="thead-dark">
 												<tr>
-													<th scope="col">Id</th>
-													<th scope="col">Name</th>
+													<th scope="col">Nama Member</th>
+													<th scope="col">Kontribusi Member</th>
 												</tr>
 											</thead>
 											<tbody id="table_org_members">
