@@ -14,7 +14,7 @@
 		var statButton;
 		var orgID;
 		var orgRepos;
-		var orgMembers;
+		var orgMembers=[];
 		var orgLang=[];
 
 		//kirim http GET request , secara SYNCHRONOUS
@@ -60,7 +60,7 @@
       			chartData[i][0] = orgRepos[i-1]['id'];
       			chartData[i][1] = parseInt(orgRepos[i-1]['size']);
       		}
-      		console.log(chartData);
+
       		var data = google.visualization.arrayToDataTable(chartData);
 
       		var options = {
@@ -106,13 +106,43 @@
       		chart.draw(data,options);
       	}
 
+      	function drawContributionsChart(){
+      		var chartData = new Array(orgMembers.length+1);
+      		chartData[0] = new Array(2);
+      		chartData[0][0] = 'Member';
+      		chartData[0][1] = 'Value';
+
+      		var key;
+      		var i = 1;
+      		for(key in orgMembers){
+      			chartData[i] = new Array(2);
+      			chartData[i][0] = key;
+      			chartData[i][1] = parseInt(orgMembers[key]);
+      			i++;
+      		}
+      		//console.log(orgMembers);
+      		var data = google.visualization.arrayToDataTable(chartData);
+
+      		var options = {
+      			title: 'kontributor paling aktif',
+          		chartArea: {
+          			width: '90%'
+          		},
+          		height: '100%',
+          		width: '100%'
+      		}
+
+      		var chart = new google.visualization.PieChart(document.getElementById('member_commits'));
+      		chart.draw(data,options);
+      	}
+
 		$(document).ready(function(){
 
 			$(".show-stat").click(function(e){
 				statButton  = e.target;
 				orgID = statButton.getAttribute('data-id')
 				orgRepos = getReposFromDB(orgID);
-
+				
 				var key;
 				//show all org repos
 				$("#table_org_repo").html('');
@@ -122,16 +152,22 @@
 						'<tr>'+"<td scope='row'>"+repo['id']+"</td>"+"<td>"+repo['size']+"</td>"+"<td>"+repo['name']+"</td>"+"<td>"+repo['full_name']+"</td>"+"<td>"+repo['description']+"</td>"+"</tr>"
 					);
 					//show all org members
-      				orgMembers = getMembersFromDB(repo['id']);
-      				for(j = 0;j < orgMembers.length;j++){
-      					var member = orgMembers[j];
-      					$("#table_org_members").append('<tr>'+"<td scope='row'>"+member['id']+"</td>"+"<td>"+member['fk_repo']+"</td>"+"<td>"+member['name']+"</td>"+'</tr>');
+					var record;
+      				record = getMembersFromDB(repo['id']);
+      				for(j = 0;j < record.length;j++){
+      					var member = record[j];
+      					console.log(member);
+      					if(!(member['name'] in orgMembers)){
+      						orgMembers[member['name']]=parseInt(member['value']);
+      						$("#table_org_members").append('<tr>'+"<td scope='row'>"+member['id']+"</td>"+"<td>"+member['name']+"</td>"+'</tr>');
+      					}else{
+      						orgMembers[member['name']]+=parseInt(member['value']);
+      					}
       				}
       				//gambar chart
       				var temp = getRepoLang(repo['id']);
       				for(k = 0;k<temp.length;k++){
       					var lang = temp[k];
-      					console.log(lang);
 
       					if(!(lang['name'] in orgLang)){
       						orgLang[lang['name']]=parseInt(lang['value']);
@@ -139,16 +175,21 @@
       						orgLang[lang['name']]+=parseInt(lang['value']);
       					}
       				}
-      				console.log(orgLang);
+      				//console.log(orgLang);
 				}
+
+				$("#repo_count").html("<h3 style='margin-bottom: 0'><strong>"+orgRepos.length + "</h3></strong> Repository");
+				$("#org_lang_num").html("<h3 style='margin-bottom: 0'><strong>"+Object.keys(orgLang).length+ "</h3></strong> Bahasa Pemrograman");
+				$("#contributors_count").html("<h3 style='margin-bottom: 0'><strong>"+Object.keys(orgMembers).length + "</h3></strong> Kontributor");
 
 
 				//draw pie chart disini
 				google.charts.load('current', {'packages':['corechart']});
       			google.charts.setOnLoadCallback(drawChart);
       			google.charts.setOnLoadCallback(drawLangChart);
+      			google.charts.setOnLoadCallback(drawContributionsChart);
 
-      			$("#span_org_name").html("Menampilkan Detail Organisasi "+statButton.getAttribute('data-org-name'));
+      			$("#span_org_name").html("Menampilkan Detail Organisasi <strong>"+statButton.getAttribute('data-org-name')+"</strong>");
 
 				$("#org_details").removeClass("d-none");
 				$("#org_table").addClass("d-none");
@@ -271,17 +312,7 @@
 										</div>
 											
 										<div class="card-header" id="headingOne" style="text-align: center">
-											<?php 
-												//isi array datas:
-												//indeks ke-0 : data repo
-												//indeks ke-1 : data proyek
-												//indeks ke-2 : data anggota
-												if(isset($datas)){
-													echo sizeof($datas[0])." Repository";
-												}else{
-													echo "Temukan repository yang ada";
-												} 
-											?>
+											<span style="font-size: 1.5em" id="repo_count"></span>
 										</div>	
 									</div> 
 							</button>	
@@ -296,17 +327,7 @@
 										<span style="font-size: 5em"><i class="fas fa-file-code"></i></span>
 									</div>
 									<div class="card-header" id="headingTwo" style="text-align: center">
-										<?php 
-											//isi array datas:
-											//indeks ke-0 : data repo
-											//indeks ke-1 : data proyek
-											//indeks ke-2 : data anggota
-											if(isset($datas)){
-												echo sizeof($datas[1])." Proyek";
-											}else{
-												echo "Bahasa Pemrograman yang digunakan";
-											} 
-										?>
+										<span style="font-size: 1.5em" id="org_lang_num"></span>
 									</div>
 								</div>
 							</button>
@@ -322,17 +343,7 @@
 										<span style="font-size: 5em"><i class="fas fa-user-friends"></i></span>
 									</div>
 									<div class="card-header" id="headingThree" style="text-align: center">
-										<?php 
-											//isi array datas:
-											//indeks ke-0 : data repo
-											//indeks ke-1 : data proyek
-											//indeks ke-2 : data anggota
-											if(isset($datas)){
-												echo sizeof($datas[2])." Anggota";
-											}else{
-												echo "Temukan kontributor yang ada";
-											} 
-										?>
+										<span style="font-size: 1.5em" id="contributors_count"></span>
 									</div>
 								</div>
 							</button>
@@ -373,7 +384,7 @@
 									<div id="piechart_repo_size">
 										
 									</div>
-									<h3>Daftar Repository</h3>
+									<h3>Informasi Repository</h3>
 									<div class="table-responsive-xl bg-white">
 										<table class="table-hover table table-sm table-striped">
 											<thead class="thead-dark">
@@ -403,13 +414,16 @@
 							</div>
 				<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample3">
 								<div class="card-body" id="org_members">
-									<h3>Data member</h3>
+									<h3>Member Paling Aktif</h3>
+									<div id="member_commits">
+										
+									</div>
+									<h3>Data Member</h3>
 									<div class="table-hover table-responsive-xl bg-white">
 										<table class="table table-sm table-striped">
 											<thead class="thead-dark">
 												<tr>
 													<th scope="col">Id</th>
-													<th scope="col">Id Repository</th>
 													<th scope="col">Name</th>
 												</tr>
 											</thead>
