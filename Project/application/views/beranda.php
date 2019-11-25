@@ -15,6 +15,7 @@
 		var orgID;
 		var orgRepos;
 		var orgMembers;
+		var orgLang=[];
 
 		//kirim http GET request , secara SYNCHRONOUS
 		function httpGetRequest(url){
@@ -56,19 +57,53 @@
       		chartData[0][1] = 'Ukuran';
       		for(var i = 1; i < chartData.length; i++){
       			chartData[i] = new Array(2);
-      			chartData[i][0] = orgRepos[i-1]['name'];
+      			chartData[i][0] = orgRepos[i-1]['id'];
       			chartData[i][1] = parseInt(orgRepos[i-1]['size']);
       		}
       		console.log(chartData);
       		var data = google.visualization.arrayToDataTable(chartData);
 
       		var options = {
-          		title: 'statistik ukuran repo'
+          		title: 'statistik ukuran repo',
+          		chartArea: {
+          			width: '90%'
+          		},
+          		width: '100%'
         	};
 
-        	var chart = new google.visualization.ColumnChart(document.getElementById('piechart_repo_size'));
+        	var chart = new google.visualization.BarChart(document.getElementById('piechart_repo_size'));
 
         	chart.draw(data, options);
+      	}
+
+      	function drawLangChart(){
+      		var chartData = new Array(orgLang.length+1);
+      		chartData[0] = new Array(2);
+      		chartData[0][0] = 'Programming Language';
+      		chartData[0][1] = 'Value';
+
+      		var key;
+      		var i = 1;
+      		for(key in orgLang){
+      			chartData[i] = new Array(2);
+      			chartData[i][0] = key;
+      			chartData[i][1] = parseInt(orgLang[key]);
+      			i++;
+      		}
+
+      		var data = google.visualization.arrayToDataTable(chartData);
+
+      		var options = {
+      			title: 'statistik bahasa pemrograman yang digunakan repo-repo pada organisasi ini',
+          		chartArea: {
+          			width: '90%'
+          		},
+          		height: '100%',
+          		width: '100%'
+      		}
+
+      		var chart = new google.visualization.PieChart(document.getElementById('piechart_langs_used'));
+      		chart.draw(data,options);
       	}
 
 		$(document).ready(function(){
@@ -84,14 +119,36 @@
 				for(i = 0,len = orgRepos.length;i <len; i++){
 					var repo = orgRepos[i];
 					$("#table_org_repo").append(
-						'<tr>'+"<td scope='row'>"+repo['id']+"</td>"+"<td>"+repo['size']+"</td>"+"<td>"+repo['name']+"</td>"+"<td>"+repo['full_name']+"</td>"+"<td>"+repo['contributors_url']+"</td>"+"</tr>"
+						'<tr>'+"<td scope='row'>"+repo['id']+"</td>"+"<td>"+repo['size']+"</td>"+"<td>"+repo['name']+"</td>"+"<td>"+repo['full_name']+"</td>"+"<td>"+repo['description']+"</td>"+"</tr>"
 					);
+					//show all org members
+      				orgMembers = getMembersFromDB(repo['id']);
+      				for(j = 0;j < orgMembers.length;j++){
+      					var member = orgMembers[j];
+      					$("#table_org_members").append('<tr>'+"<td scope='row'>"+member['id']+"</td>"+"<td>"+member['fk_repo']+"</td>"+"<td>"+member['name']+"</td>"+'</tr>');
+      				}
+      				//gambar chart
+      				var temp = getRepoLang(repo['id']);
+      				for(k = 0;k<temp.length;k++){
+      					var lang = temp[k];
+      					console.log(lang);
+
+      					if(!(lang['name'] in orgLang)){
+      						orgLang[lang['name']]=parseInt(lang['value']);
+      					}else{
+      						orgLang[lang['name']]+=parseInt(lang['value']);
+      					}
+      				}
+      				console.log(orgLang);
 				}
+
+
 				//draw pie chart disini
 				google.charts.load('current', {'packages':['corechart']});
       			google.charts.setOnLoadCallback(drawChart);
+      			google.charts.setOnLoadCallback(drawLangChart);
 
-
+      			$("#span_org_name").html("Menampilkan Detail Organisasi "+statButton.getAttribute('data-org-name'));
 
 				$("#org_details").removeClass("d-none");
 				$("#org_table").addClass("d-none");
@@ -182,7 +239,7 @@
 									echo "<td>".$row['full_name']."</td>";
 									echo "<td>".$row['follower']."</td>";
 									echo "<td>".$row['following']."</td>";
-									echo "<td><i style='font-size:2em' data-id=".$row['id']." class='fas fa-info-circle show-stat'></i></td>";
+									echo "<td><i style='font-size:2em' data-org-name=".$row['name']." data-id=".$row['id']." class='fas fa-info-circle show-stat'></i></td>";
 									echo "</tr>";
 								}
 							}
@@ -233,10 +290,10 @@
 
 					<div class="col">
 						<div class="accordion" id="accordionExample2">
-							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+							<button class="btn btn-link collapsed my-btn" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
 								<div class="card">
 									<div class="row align-items-center justify-content-center">
-										<span style="font-size: 5em"><i class="fas fa-tasks"></i></span>
+										<span style="font-size: 5em"><i class="fas fa-file-code"></i></span>
 									</div>
 									<div class="card-header" id="headingTwo" style="text-align: center">
 										<?php 
@@ -247,48 +304,13 @@
 											if(isset($datas)){
 												echo sizeof($datas[1])." Proyek";
 											}else{
-												echo "Temukan Proyek-proyek yang ada";
+												echo "Bahasa Pemrograman yang digunakan";
 											} 
 										?>
 									</div>
 								</div>
 							</button>
-							<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample2">
-								<div class="card-body">
-									<div class="table-responsive-xl">
-										<table class="table table-sm table-striped">
-											<thead class="thead-dark">
-												<tr>
-													<th scope="col">Id</th>
-													<th scope="col">Name</th>
-													<th scope="col">Last</th>
-													<th scope="col">Handle</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<th scope="row">1</th>
-													<td>Mark</td>
-													<td>Otto</td>
-													<td>@mdo</td>
-												</tr>
-												<tr>
-													<th scope="row">2</th>
-													<td>Jacob</td>
-													<td>Thornton</td>
-													<td>@fat</td>
-												</tr>
-												<tr>
-													<th scope="row">3</th>
-													<td>Larry</td>
-													<td>the Bird</td>
-													<td>@twitter</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>	
+								
 						</div>
 					</div>
 
@@ -314,34 +336,6 @@
 									</div>
 								</div>
 							</button>
-							<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample3">
-								<div class="card-body">
-									<div class="table-responsive-xl">
-										<table class="table table-sm table-striped">
-											<thead class="thead-dark">
-												<tr>
-													<th scope="col">Id</th>
-													<th scope="col">Name</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<th scope="row">1</th>
-													<td>mjnaderi</td>
-												</tr>
-												<tr>
-													<th scope="row">2</th>
-													<td>ayenz</td>
-												</tr>
-												<tr>
-													<th scope="row">3</th>
-													<td>pascalalfadian</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
 						</div>
 					</div>
 				
@@ -380,15 +374,15 @@
 										
 									</div>
 									<h3>Daftar Repository</h3>
-									<div class="table-responsive-xl">
-										<table class="table table-sm table-striped">
+									<div class="table-responsive-xl bg-white">
+										<table class="table-hover table table-sm table-striped">
 											<thead class="thead-dark">
 												<tr>
 													<th scope="col">Id</th>
 													<th scope="col">Size</th>
 													<th scope="col">Name</th>
 													<th scope="col">Full_name</th>
-													<th scope="col">Contributors_url</th>
+													<th scope="col">Description</th>
 												</tr>
 											</thead>
 											<tbody id="table_org_repo">
@@ -396,10 +390,36 @@
 										</table>
 									</div>
 								</div>
-								<div class="card-body d-none" id="org_members">
-									
+							</div>
+				<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample2">
+								<div class="card-body">
+									<div id="piechart_langs_used">
+										
+									</div>
+									<div class="table-hover table-responsive-xl">
+										
+									</div>
 								</div>
-							</div>	
+							</div>
+				<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample3">
+								<div class="card-body" id="org_members">
+									<h3>Data member</h3>
+									<div class="table-hover table-responsive-xl bg-white">
+										<table class="table table-sm table-striped">
+											<thead class="thead-dark">
+												<tr>
+													<th scope="col">Id</th>
+													<th scope="col">Id Repository</th>
+													<th scope="col">Name</th>
+												</tr>
+											</thead>
+											<tbody id="table_org_members">
+												
+											</tbody>
+										</table>
+									</div>
+								</div>	
+							</div>
 			</div>
 		</div>
 	</div>

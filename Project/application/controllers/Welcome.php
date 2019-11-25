@@ -82,7 +82,12 @@ class Welcome extends CI_Controller {
 	//function khusus untuk menghandle request via javascript
 	public function getUserFromDB($fk_repo){
 		$this->load->database();
-		echo json_encode($this->get_user_from_db($fk_repo));
+		$response = $this->get_user_from_db($fk_repo);
+		if(is_array($response)){
+			echo json_encode($this->get_user_from_db($fk_repo));
+		}else{
+			echo json_encode(array('error' => $response));
+		}
 	}
 
 	//function khusus untuk menghandle request via javascript
@@ -306,7 +311,7 @@ class Welcome extends CI_Controller {
 		$result = $this->db->get()->result_array();
 
 		if (count($result) == 0){
-			echo "Repository tidak memiliki contributor";
+			return "Repository tidak memiliki contributor";
 		} else {
 			return $result;
 		}
@@ -321,7 +326,7 @@ class Welcome extends CI_Controller {
 		$result = $this->db->get()->result_array();
 
 		if (count($result) == 0){
-			echo "Repository tidak memiliki language";
+			return "Repository tidak memiliki language";
 		} else {
 			return $result;
 		}
