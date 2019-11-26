@@ -15,3 +15,11 @@ Ada juga fitur tambahan yang mungkin akan dibuat seperti membuat statistik seber
 ## Masukan untuk Proposal
 
 OK. Untuk "kontributor pria/wanita", karena nantinya pakai Face API, sekalian bisa ditambah seperti seberapa senyum kontributornya, dll. Sambil jalan saja, tapi kalau bisa statistik yang lebih mengedepankan face contributor, saya lebih prefer banyak di sana daripada statistik standar seperti ukuran repo, bahasa pemrograman, dll.
+
+## Fitur yang telah dibuat
+
+* Menambahkan organisasi
+* Statistika contributor yang paling berkontribusi
+* Statistika jumlah commit yang dilakukan setiap contributor
+* Statistika ukuran setiap repository
+* Statistika bahasa pemrograman yang paling populer dalam organisasi
