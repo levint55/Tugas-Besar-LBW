@@ -1,4 +1,4 @@
-# _Masukkan Judul Project Anda di sini_
+# Statistik Github
 
 ## Proposal
 
@@ -15,7 +15,3 @@ Ada juga fitur tambahan yang mungkin akan dibuat seperti membuat statistik seber
 ## Masukan untuk Proposal
 
 OK. Untuk "kontributor pria/wanita", karena nantinya pakai Face API, sekalian bisa ditambah seperti seberapa senyum kontributornya, dll. Sambil jalan saja, tapi kalau bisa statistik yang lebih mengedepankan face contributor, saya lebih prefer banyak di sana daripada statistik standar seperti ukuran repo, bahasa pemrograman, dll.
-
-## Lain-lain
-
-_Silakan mengisi README.md sesuai kebutuhan kelompok Anda mulai dari sini._
