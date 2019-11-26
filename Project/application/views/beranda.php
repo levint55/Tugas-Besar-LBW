@@ -98,7 +98,6 @@
           		chartArea: {
           			width: '90%'
           		},
-          		height: '100%',
           		width: '100%'
       		}
 
@@ -134,7 +133,6 @@
           		chartArea: {
           			width: '90%'
           		},
-          		height: '100%',
           		width: '100%'
       		}
 
@@ -147,11 +145,14 @@
 			$(".show-stat").click(function(e){
 				statButton  = e.target;
 				orgID = statButton.getAttribute('data-id')
+				$("#"+orgID+"-info").addClass("d-none");
+				$("#"+orgID+"-loading").removeClass("d-none");
 				orgRepos = getReposFromDB(orgID);
 				orgLang = [];
 				orgMembers = [];
 				//show all org repos
 				$("#table_org_repo").html('');
+				$("#table_org_members").html('');
 				for(i = 0,len = orgRepos.length;i <len; i++){
 					var repo = orgRepos[i];
 					$("#table_org_repo").append(
@@ -185,11 +186,24 @@
 				for(key in orgMembers){
 					var memberContribution = orgMembers[key];
 					var repoName;
-					var str = '<tr>'+"<td>"+key+"</td> "+"<td>";
-					for(repoName in memberContribution){
-						str +="<strong>"+repoName+"</strong>"+" ("+memberContribution[repoName]+" commit) ";
-					} 
-					str += "</tr>";
+					var str;
+					if(Object.keys(memberContribution).length>1){
+						var first = true;
+						
+						for(repoName in memberContribution){
+							if(first){
+								str = '<tr>'+"<td rowspan="+Object.keys(memberContribution).length+">"+key+"</td><td><strong>"+repoName+"</strong>"+" ("+memberContribution[repoName]+" commit)</td></tr>";
+								first = false;
+							}else{
+								str +="<tr><td><strong>"+repoName+"</strong>"+" ("+memberContribution[repoName]+" commit)</td></tr>";
+							}
+						} 
+					}else{
+						for(repoName in memberContribution){
+						str = '<tr>'+"<td>"+key+"</td>";
+						str +="<td><strong>"+repoName+"</strong>"+" ("+memberContribution[repoName]+" commit)</td></tr>";		
+						} 
+					}
 					$("#table_org_members").append(str);
 				}
 
@@ -199,12 +213,23 @@
 
 
 				//draw pie chart disini
-				google.charts.load('current', {'packages':['corechart']});
-      			google.charts.setOnLoadCallback(drawChart);
-      			google.charts.setOnLoadCallback(drawLangChart);
-      			google.charts.setOnLoadCallback(drawContributionsChart);
+				
+      			google.charts.load('current', {'packages':['corechart']});
+      			// google.charts.setOnLoadCallback(drawLangChart);
+      			// google.charts.setOnLoadCallback(drawContributionsChart);
 
       			$("#span_org_name").html("Menampilkan Detail Organisasi <strong>"+statButton.getAttribute('data-org-name')+"</strong>");
+      			$("#collapseOne").on('shown.bs.collapse',function(){
+					google.charts.setOnLoadCallback(drawChart);
+				});
+				$("#collapseTwo").on('shown.bs.collapse',function(){
+					google.charts.setOnLoadCallback(drawLangChart);
+				});
+				$("#collapseThree").on('shown.bs.collapse',function(){
+					google.charts.setOnLoadCallback(drawContributionsChart);
+				});
+				$("#"+orgID+"-loading").addClass("d-none");
+				$("#"+orgID+"-info").removeClass("d-none");
 
 				$("#org_details").removeClass("d-none");
 				$("#org_table").addClass("d-none");
@@ -212,6 +237,9 @@
 			$("#btn_org_table").click(function(){
 				$("#org_details").addClass("d-none");
 				$("#org_table").removeClass("d-none");
+				$("#collapseOne").collapse('hide');
+				$("#collapseTwo").collapse('hide');
+				$("#collapseThree").collapse('hide');
 			});
 		});
 	</script>
@@ -236,6 +264,9 @@
 		background-color: rgb(240, 238, 233);
 	}
 	#frm_search{
+		width: 100%;
+	}
+	.card-body{
 		width: 100%;
 	}
 	.dashboard-image{
@@ -295,7 +326,7 @@
 									echo "<td>".$row['full_name']."</td>";
 									echo "<td>".$row['follower']."</td>";
 									echo "<td>".$row['following']."</td>";
-									echo "<td><i style='font-size:2em' data-org-name=".$row['name']." data-id=".$row['id']." class='fas fa-info-circle show-stat'></i></td>";
+									echo "<td><i style='font-size:2em' data-org-name=".$row['name']." data-id=".$row['id']." id=".$row['id']."-info"." class='fas fa-info-circle show-stat'></i> <i id=".$row['id']."-loading"." class='fas fa-spinner fa-spin loading d-none' style='font-size: 2em'></i></td>";
 									echo "</tr>";
 								}
 							}
